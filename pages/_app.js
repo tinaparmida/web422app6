@@ -1,15 +1,15 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Layout from '@/components/Layout';
-import { SWRConfig } from 'swr';
+import RouteGuard from '@/components/RouteGuard';
+
 
 function MyApp({ Component, pageProps }) {
   return (
     <>
        <Layout>
-   <SWRConfig value={{ fetcher: (...args) => fetch(...args).then((res) => res.json()) }}>
-      
+<RouteGuard>      
           <Component {...pageProps} />
-        </SWRConfig>
+        </RouteGuard>
       </Layout>
     </>
   );

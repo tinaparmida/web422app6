@@ -1,9 +1,9 @@
-/* eslint-disable react/no-unescaped-entities */
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/router';
 import { Form, Button, Row, Col } from 'react-bootstrap';
 import { searchHistoryAtom } from '../store';
 import { useAtom } from 'jotai';
+import { addToHistory } from '../lib/userData'; // Import addToHistory function
 
 const AdvancedSearch = () => {
   const [searchHistory, setSearchHistory] = useAtom(searchHistoryAtom);
@@ -11,7 +11,7 @@ const AdvancedSearch = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const router = useRouter();
 
-  const submitForm = (data) => {
+  const submitForm = async (data) => { // Make submitForm asynchronous
     let queryString = "searchBy=" + data.searchBy;
 
     if (data.geoLocation) {
@@ -26,7 +26,11 @@ const AdvancedSearch = () => {
     queryString += `&isHighlight=${data.isHighlight || false}`;
     queryString += `&q=${data.q}`;
 
+    // Add the queryString to history using addToHistory function
     setSearchHistory(current => [...current, queryString]);
+
+    // Add the search to history using addToHistory function
+    await addToHistory(queryString);
 
     router.push(`/artwork?${queryString}`);
   };

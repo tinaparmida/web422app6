@@ -2,6 +2,7 @@ import { Card, ListGroup, Button } from 'react-bootstrap';
 import { useRouter } from 'next/router';
 import { useAtom } from 'jotai';
 import { searchHistoryAtom } from '../store';
+import { removeFromHistory } from '../lib/userData'; // Import removeFromHistory function
 import styles from '@/styles/History.module.css'; 
 
 const History = () => {
@@ -23,14 +24,12 @@ const History = () => {
   };
 
   // Function to remove a history item from the search history
-  const removeHistoryClicked = (e, index) => {
+  const removeHistoryClicked = async (e, index) => { // Make removeHistoryClicked asynchronous
     e.stopPropagation(); // Stop the event from triggering other events
-    setSearchHistory(current => {
-      let updatedHistory = [...current];
-      updatedHistory.splice(index, 1);
-      return updatedHistory;
-    });
+    setSearchHistory(await removeFromHistory(searchHistory[index])); // Remove history item using removeFromHistory function
   };
+
+  if (!searchHistory) return null; // Return null if searchHistory is not yet available
 
   return (
     <div>

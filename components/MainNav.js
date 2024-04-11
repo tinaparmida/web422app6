@@ -4,17 +4,25 @@ import { useRouter } from 'next/router';
 import { useState } from 'react'; 
 import { useAtom } from 'jotai';
 import { searchHistoryAtom } from '../store';
+import { addToHistory } from '../lib/userData'; // Import addToHistory function
+import { removeToken } from '../lib/authenticate'; // Import removeToken function
 
 const MainNav = () => {
   const router = useRouter();
   const [isExpanded, setIsExpanded] = useState(false);
   const [searchHistory, setSearchHistory] = useAtom(searchHistoryAtom);
+ 
+  let token = '';
 
+  if (typeof window !== 'undefined') {
+    // Check if running in the browser
+    token = localStorage.getItem('token');
+  }
   const toggleExpansion = () => {
     setIsExpanded(!isExpanded);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => { // Make handleSubmit asynchronous
     event.preventDefault();
     const searchField = event.target.search.value;
     
@@ -23,12 +31,21 @@ const MainNav = () => {
   
     // Add the computed queryString to the searchHistory array
     setSearchHistory(current => [...current, queryString]);
+
+    // Add the search to history using addToHistory function
+    await addToHistory(`title=true&q=${searchField}`);
   
     // Navigate to the search results page
     router.push(`/artwork?${queryString}`);
     
     // Close the navbar after search submission
     setIsExpanded(false);
+  };
+
+  const logout = () => {
+    setIsExpanded(false); // Collapse the menu
+    removeToken(); // Remove token from localStorage
+    router.push('/login'); // Redirect to login page
   };
 
   return (
@@ -43,9 +60,11 @@ const MainNav = () => {
                 <span className={router.pathname === "/" ? "active" : ""}>Home</span>
               </Link>
               <span className="nav-space"> </span> 
-              <Link href="/search">
-                <span className={router.pathname === "/search" ? "active" : ""}>Advanced Search</span>
-              </Link>
+              {token && (
+                <Link href="/search">
+                  <span className={router.pathname === "/search" ? "active" : ""}>Advanced Search</span>
+                </Link>
+              )}
             </Nav>
             <Form className="d-flex" onSubmit={handleSubmit} style={{ justifyContent: 'flex-end', width: '100%' }}>
               <FormControl
@@ -57,18 +76,31 @@ const MainNav = () => {
               <Button type="submit" variant="outline-light">Search</Button>
             </Form>
             <Nav>
-              <NavDropdown title="User Name" id="basic-nav-dropdown" className="custom-dropdown">
-                <NavDropdown.Item>
-                  <Link href="/favourites">
-                    <span className={router.pathname === "/favourites" ? "active" : ""}>Favourites</span>
+              {token ? (
+                <NavDropdown title="User Name" id="basic-nav-dropdown" className="custom-dropdown">
+                  <NavDropdown.Item>
+                    <Link href="/favourites">
+                      <span className={router.pathname === "/favourites" ? "active" : ""}>Favourites</span>
+                    </Link>
+                  </NavDropdown.Item>
+                  <NavDropdown.Item>
+                    <Link href="/history">
+                      <span className={router.pathname === "/history" ? "active" : ""}>Search History</span>
+                    </Link>
+                  </NavDropdown.Item>
+                  <NavDropdown.Item onClick={logout}>Logout</NavDropdown.Item>
+                </NavDropdown>
+              ) : (
+                <Nav>
+                  <Link href="/register">
+                    <span className={router.pathname === "/register" ? "active" : ""}>Register</span>
                   </Link>
-                </NavDropdown.Item>
-                <NavDropdown.Item>
-                  <Link href="/history">
-                    <span className={router.pathname === "/history" ? "active" : ""}>Search History</span>
+                  <span className="nav-space"> </span>
+                  <Link href="/login">
+                    <span className={router.pathname === "/login" ? "active" : ""}>Login</span>
                   </Link>
-                </NavDropdown.Item>
-              </NavDropdown>
+                </Nav>
+              )}
             </Nav>
           </Navbar.Collapse>
         </Container>

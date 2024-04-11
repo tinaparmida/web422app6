@@ -2,25 +2,32 @@ import { Card, Button } from 'react-bootstrap';
 import Link from 'next/link';
 import Error from 'next/error';
 import useSWR from 'swr';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAtom } from 'jotai';
+import { addToFavourites, removeFromFavourites } from '@/lib/userData';
 import { favouritesAtom } from '../store';
 
-
 const ArtworkCardDetail = ({ objectID }) => {
- const [favouritesList, setFavouritesList] = useAtom(favouritesAtom);
- const [showAdded, setShowAdded] = useState(favouritesList.includes(objectID));
+  const [favouritesList, setFavouritesList] = useAtom(favouritesAtom);
+  const [showAdded, setShowAdded] = useState(false);
 
+  useEffect(() => {
+    setShowAdded(favouritesList?.includes(objectID));
+  }, [favouritesList, objectID]);
 
- const favouritesClicked = () => {
-    if (showAdded) {
-      setFavouritesList(current => current.filter(fav => fav !== objectID));
-    } else {
-      setFavouritesList(current => [...current, objectID]);
+  const favouritesClicked = async () => {
+    try {
+      if (showAdded) {
+        await removeFromFavourites(objectID);
+      } else {
+        await addToFavourites(objectID);
+      }
+      setShowAdded(!showAdded);
+    } catch (error) {
+      console.error('Error:', error);
     }
-    setShowAdded(prev => !prev);
   };
-  
+
   const { data, error } = useSWR(
     `https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectID}`,
     async (url) => {
@@ -44,7 +51,7 @@ const ArtworkCardDetail = ({ objectID }) => {
 
   const {
     primaryImage,
-   classification,
+    classification,
     medium,
     artistDisplayName,
     creditLine,
@@ -58,7 +65,7 @@ const ArtworkCardDetail = ({ objectID }) => {
     <Card>
       {primaryImage && <Card.Img variant="top" src={primaryImage} alt="Artwork Image" />}
       <Card.Body>
-      {title && (
+        {title && (
           <>
             <Card.Title>{title}</Card.Title>
           </>
@@ -114,14 +121,13 @@ const ArtworkCardDetail = ({ objectID }) => {
           <Button as="a" variant="primary">
             View Details (ID: {objectID})
           </Button>
-          <Button
-  variant={showAdded ? 'primary' : 'outline-primary'}
-  onClick={favouritesClicked}
->
-  {showAdded ? '+ Favourite (added)' : '+ Favourite'}
-</Button>
-
         </Link>
+        <Button
+          variant={showAdded ? 'primary' : 'outline-primary'}
+          onClick={favouritesClicked}
+        >
+          {showAdded ? '- Remove from Favorites' : '+ Add to Favorites'}
+        </Button>
       </Card.Body>
     </Card>
   );
