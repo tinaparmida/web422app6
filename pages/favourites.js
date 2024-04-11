@@ -2,12 +2,13 @@ import { useAtom } from 'jotai';
 import { favouritesAtom } from '../store';
 import ArtworkCard from '../components/ArtworkCard';
 import { Container, Row, Col } from 'react-bootstrap';
-import Link from 'next/link';
-
 
 const Favourites = () => {
     // Get a reference to the favouritesList from the favouritesAtom
     const [favouritesList] = useAtom(favouritesAtom);
+
+    // Check if favouritesList is null, if so, return null to prevent rendering the component temporarily
+    if (!favouritesList) return null;
   
     return (
       <Container>
@@ -16,7 +17,7 @@ const Favourites = () => {
             <h1>Favourites</h1>
           </Col>
         </Row>
-        {favouritesList == null ? (
+        {favouritesList.length === 0 ? (
           <Row>
             <Col>
               <p>Nothing Here. Try adding some new artwork to the list.</p>
@@ -36,4 +37,3 @@ const Favourites = () => {
   };
   
   export default Favourites;
-  

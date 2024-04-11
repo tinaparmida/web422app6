@@ -10,7 +10,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [warning, setWarning] = useState('');
   const router = useRouter();
-
+ 
   async function handleSubmit(e) {
     e.preventDefault();
     try {
@@ -20,6 +20,7 @@ export default function Login() {
       setWarning(error.message);
     }
   }
+
 
   return (
     <>

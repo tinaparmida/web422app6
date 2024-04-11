@@ -18,16 +18,15 @@ const ArtworkCardDetail = ({ objectID }) => {
   const favouritesClicked = async () => {
     try {
       if (showAdded) {
-        await removeFromFavourites(objectID);
+        await setFavouritesList(await removeFromFavourites(objectID));
       } else {
-        await addToFavourites(objectID);
+        await setFavouritesList(await addToFavourites(objectID));
       }
       setShowAdded(!showAdded);
     } catch (error) {
       console.error('Error:', error);
     }
   };
-
   const { data, error } = useSWR(
     `https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectID}`,
     async (url) => {

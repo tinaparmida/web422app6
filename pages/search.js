@@ -27,7 +27,7 @@ const AdvancedSearch = () => {
     queryString += `&q=${data.q}`;
 
     // Add the queryString to history using addToHistory function
-    setSearchHistory(current => [...current, queryString]);
+    setSearchHistory(await addToHistory(queryString));
 
     // Add the search to history using addToHistory function
     await addToHistory(queryString);

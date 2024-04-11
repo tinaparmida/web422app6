@@ -5,42 +5,35 @@ import { useState } from 'react';
 import { useAtom } from 'jotai';
 import { searchHistoryAtom } from '../store';
 import { addToHistory } from '../lib/userData'; // Import addToHistory function
-import { removeToken } from '../lib/authenticate'; // Import removeToken function
+import { removeToken, readToken } from '../lib/authenticate'; // Import removeToken function
 
 const MainNav = () => {
   const router = useRouter();
   const [isExpanded, setIsExpanded] = useState(false);
   const [searchHistory, setSearchHistory] = useAtom(searchHistoryAtom);
- 
-  let token = '';
-
-  if (typeof window !== 'undefined') {
-    // Check if running in the browser
-    token = localStorage.getItem('token');
-  }
+  const token = readToken();
+  
   const toggleExpansion = () => {
     setIsExpanded(!isExpanded);
   };
 
-  const handleSubmit = async (event) => { // Make handleSubmit asynchronous
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const searchField = event.target.search.value;
-    
+  
     // Compute the queryString
     const queryString = `title=true&q=${searchField}`;
   
-    // Add the computed queryString to the searchHistory array
-    setSearchHistory(await addToHistory(`title=true&q=${searchField}`)) 
-
-    // Add the search to history using addToHistory function
-    await addToHistory(`title=true&q=${searchField}`);
+    // Add the search to history using addToHistory function and update setSearchHistory
+    setSearchHistory(await addToHistory(queryString));
   
     // Navigate to the search results page
     router.push(`/artwork?${queryString}`);
-    
+  
     // Close the navbar after search submission
     setIsExpanded(false);
   };
+  
 
   const logout = () => {
     setIsExpanded(false); // Collapse the menu
@@ -73,7 +66,7 @@ const MainNav = () => {
                 className="mr-2"
                 name="search"
               />
-              <Button type="submit" variant="outline-light">Search</Button>
+              <Button type="submit" >Search</Button>
             </Form>
             <Nav>
               {token ? (
