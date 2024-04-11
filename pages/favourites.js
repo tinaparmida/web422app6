@@ -2,6 +2,8 @@ import { useAtom } from 'jotai';
 import { favouritesAtom } from '../store';
 import ArtworkCard from '../components/ArtworkCard';
 import { Container, Row, Col } from 'react-bootstrap';
+import Link from 'next/link';
+
 
 const Favourites = () => {
     // Get a reference to the favouritesList from the favouritesAtom
