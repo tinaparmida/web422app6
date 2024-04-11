@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 /*********************************************************************************
-*  WEB422 – Assignment 5
+*  WEB422 – Assignment 6
 *
 *  I declare that this assignment is my own work in accordance with Seneca's
 *  Academic Integrity Policy:
