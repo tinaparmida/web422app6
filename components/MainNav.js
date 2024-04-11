@@ -30,7 +30,7 @@ const MainNav = () => {
     const queryString = `title=true&q=${searchField}`;
   
     // Add the computed queryString to the searchHistory array
-    setSearchHistory(current => [...current, queryString]);
+    setSearchHistory(await addToHistory(`title=true&q=${searchField}`)) 
 
     // Add the search to history using addToHistory function
     await addToHistory(`title=true&q=${searchField}`);
