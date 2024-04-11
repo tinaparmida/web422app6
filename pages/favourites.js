@@ -14,7 +14,7 @@ const Favourites = () => {
             <h1>Favourites</h1>
           </Col>
         </Row>
-        {favouritesList.length === 0 ? (
+        {favouritesList == null ? (
           <Row>
             <Col>
               <p>Nothing Here. Try adding some new artwork to the list.</p>
