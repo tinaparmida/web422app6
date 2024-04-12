@@ -7,7 +7,7 @@
 *  https://www.senecapolytechnic.ca/about/policies/academic-integrity-policy.html
 * 
 *  Name: Tina Khakian Student ID: 133117226 Date: 04/11/2024
-*
+*  Vercel App (Deployed) Link: https://web422app6-rj9qlxd54-tinaparmidas-projects.vercel.app/
 ********************************************************************************/
 
 import { useState, useEffect } from 'react';
